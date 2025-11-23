@@ -1,3 +1,5 @@
+<img width="11520" height="3456" alt="Banner_notebooks" src="https://github.com/user-attachments/assets/66a3d9a6-798f-4397-9e60-b8c529ad2b0a" />
+
 # Flujo de datos de SQL a Python
 
 ## 📝 Descripción del proyecto
