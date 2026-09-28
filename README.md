@@ -221,7 +221,7 @@ Por eso, además del dataset, hay que entregar tres cosas que el siguiente proye
 > [!IMPORTANT]
 > **Declarad el grano antes de escribir el primer `JOIN`.** Una fila de vuestro dataset, ¿qué representa? ¿Un pedido? ¿Una línea de pedido? ¿Un cliente y un mes?
 >
-> En Olist esto no es teórico: un `JOIN` de `orders` con `order_items`, `order_payments` y `order_reviews` sin agregar antes infla la facturación total de **16.008.872 R$ a 20.187.928 R$, un 26% de más**. Y el dataset solo pasa de 99.441 a 119.143 filas, así que el error no canta. Parece que funcionó.
+> En Olist esto no es teórico: un `JOIN` de `orders` con `order_items`, `order_payments` y `order_reviews` sin agregar antes infla la facturación total de **16.008.872 R$ a 20.187.928 R$, un 26% de más**. Y el dataset solo pasa de 97.916 pedidos a 117.329 filas, así que el error no canta. Parece que funcionó.
 >
 > La regla: **agrega primero al grano que necesitas, une después.** Nunca al revés.
 
