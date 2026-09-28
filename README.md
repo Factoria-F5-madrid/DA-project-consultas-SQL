@@ -34,11 +34,32 @@ mysql -u root -p < olist.sql
 
 Tarda unos minutos: son **1.550.922 filas**. Al terminar tendrás la base `olist` con 9 tablas.
 
+### ✅ Comprueba que cargó bien
+
+Antes de empezar, ejecuta esto. Las nueve tablas deben coincidir:
+
 ```sql
 USE olist;
-SHOW TABLES;
-SELECT COUNT(*) FROM orders;   -- 99441
+
+SELECT 'categoria_traduccion' t, COUNT(*) filas, 71      esperado FROM categoria_traduccion
+UNION ALL SELECT 'products',       COUNT(*),      32951   FROM products
+UNION ALL SELECT 'sellers',        COUNT(*),      3095    FROM sellers
+UNION ALL SELECT 'customers',      COUNT(*),      99441   FROM customers
+UNION ALL SELECT 'geolocation',    COUNT(*),      1000163 FROM geolocation
+UNION ALL SELECT 'orders',         COUNT(*),      99441   FROM orders
+UNION ALL SELECT 'order_items',    COUNT(*),      112650  FROM order_items
+UNION ALL SELECT 'order_payments', COUNT(*),      103886  FROM order_payments
+UNION ALL SELECT 'order_reviews',  COUNT(*),      99224   FROM order_reviews;
 ```
+
+Y comprueba que los acentos portugueses se cargaron bien:
+
+```sql
+SELECT DISTINCT product_category_name FROM products
+WHERE product_category_name LIKE '%m_veis%' LIMIT 3;   -- debe salir 'moveis_...'
+```
+
+Si algún número no cuadra, vuelve a cargar el volcado antes de seguir.
 
 > [!NOTE]
 > Son datos **reales** de 99.441 pedidos realizados en Brasil entre 2016 y 2018.
@@ -171,7 +192,7 @@ Cada estudiante debe seleccionar uno de los tres dataframes y:
 
 ## 👥 Equipos
 
-**Equipos de 3 o 4 personas.** Los mismos equipos trabajan los **tres proyectos encadenados**: este, el de Automatización y el de Power BI. Lo que construyas aquí es lo que tu equipo automatizará y visualizará después.
+**Equipos de 3 o 4 personas.** Los mismos equipos trabajan los **tres proyectos encadenados**: este, el de Automatización y el de Power BI. Lo que construyáis aquí es lo que vuestro equipo automatizará y visualizará después.
 
 ## 📦 Condiciones de entrega
 
@@ -200,7 +221,7 @@ Por eso, además del dataset, hay que entregar tres cosas que el siguiente proye
 > [!IMPORTANT]
 > **Declarad el grano antes de escribir el primer `JOIN`.** Una fila de vuestro dataset, ¿qué representa? ¿Un pedido? ¿Una línea de pedido? ¿Un cliente y un mes?
 >
-> En Olist esto no es teórico: un `JOIN` de `orders` con `order_items`, `order_payments` y `order_reviews` sin agregar antes infla la facturación total de **16.008.872 R$ a 20.579.664 R$, un 29% de más**. Y el dataset solo pasa de 99.441 a 119.143 filas, así que el error no canta. Parece que funcionó.
+> En Olist esto no es teórico: un `JOIN` de `orders` con `order_items`, `order_payments` y `order_reviews` sin agregar antes infla la facturación total de **16.008.872 R$ a 20.187.928 R$, un 26% de más**. Y el dataset solo pasa de 99.441 a 119.143 filas, así que el error no canta. Parece que funcionó.
 >
 > La regla: **agrega primero al grano que necesitas, une después.** Nunca al revés.
 
