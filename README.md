@@ -34,11 +34,32 @@ mysql -u root -p < olist.sql
 
 Tarda unos minutos: son **1.550.922 filas**. Al terminar tendrás la base `olist` con 9 tablas.
 
+### ✅ Comprueba que cargó bien
+
+Antes de empezar, ejecuta esto. Las nueve tablas deben coincidir:
+
 ```sql
 USE olist;
-SHOW TABLES;
-SELECT COUNT(*) FROM orders;   -- 99441
+
+SELECT 'categoria_traduccion' t, COUNT(*) filas, 71      esperado FROM categoria_traduccion
+UNION ALL SELECT 'products',       COUNT(*),      32951   FROM products
+UNION ALL SELECT 'sellers',        COUNT(*),      3095    FROM sellers
+UNION ALL SELECT 'customers',      COUNT(*),      99441   FROM customers
+UNION ALL SELECT 'geolocation',    COUNT(*),      1000163 FROM geolocation
+UNION ALL SELECT 'orders',         COUNT(*),      99441   FROM orders
+UNION ALL SELECT 'order_items',    COUNT(*),      112650  FROM order_items
+UNION ALL SELECT 'order_payments', COUNT(*),      103886  FROM order_payments
+UNION ALL SELECT 'order_reviews',  COUNT(*),      99224   FROM order_reviews;
 ```
+
+Y comprueba que los acentos portugueses se cargaron bien:
+
+```sql
+SELECT DISTINCT product_category_name FROM products
+WHERE product_category_name LIKE '%m_veis%' LIMIT 3;   -- debe salir 'moveis_...'
+```
+
+Si algún número no cuadra, vuelve a cargar el volcado antes de seguir.
 
 > [!NOTE]
 > Son datos **reales** de 99.441 pedidos realizados en Brasil entre 2016 y 2018.
@@ -169,9 +190,13 @@ Cada estudiante debe seleccionar uno de los tres dataframes y:
 - **Python:** notebook en Google Colab
 - **GitHub:** repositorio del proyecto
 
+## 👥 Equipos
+
+**Equipos de 3 o 4 personas.** Los mismos equipos trabajan los **tres proyectos encadenados**: este, el de Automatización y el de Power BI. Lo que construyáis aquí es lo que vuestro equipo automatizará y visualizará después.
+
 ## 📦 Condiciones de entrega
 
-- Entrega individual.
+- Entrega en equipo.
 - Query SQL de extracción y limpieza del dataframe seleccionado, esto lo harán exportando el script de la consulta SQL final completa.
 - Notebook (.ipynb).
 - README documentando:
@@ -180,6 +205,33 @@ Cada estudiante debe seleccionar uno de los tres dataframes y:
   - instrucciones para ejecutar notebook
   - descripción de decisiones tomadas en el proyecto
 - Subir todo a un repositorio de GitHub.
+
+### 🔗 Qué pasa al siguiente proyecto
+
+Este proyecto **no termina en el CSV**. Su salida es la entrada del Proyecto IV, donde automatizaréis esta misma extracción, y del Proyecto V, donde la visualizaréis en Power BI.
+
+Por eso, además del dataset, hay que entregar tres cosas que el siguiente proyecto necesita:
+
+| Entregable | Por qué lo necesita P4 |
+| :--- | :--- |
+| **El grano declarado** en una frase: «una fila = ...» | Sin él, el ETL automatizado replica el error a cada ejecución |
+| **La consulta SQL final completa** | Es lo que P4 convierte en script parametrizado |
+| **Los KPIs que vais a medir** | Determinan a qué nivel agregar. Facturación, ticket medio, días de entrega, % de retrasos... |
+
+> [!IMPORTANT]
+> **Declarad el grano antes de escribir el primer `JOIN`.** Una fila de vuestro dataset, ¿qué representa? ¿Un pedido? ¿Una línea de pedido? ¿Un cliente y un mes?
+>
+> En Olist esto no es teórico: un `JOIN` de `orders` con `order_items`, `order_payments` y `order_reviews` sin agregar antes infla la facturación total de **16.008.872 R$ a 20.187.928 R$, un 26% de más**. Y el dataset solo pasa de 97.916 pedidos a 117.329 filas, así que el error no canta. Parece que funcionó.
+>
+> La regla: **agrega primero al grano que necesitas, une después.** Nunca al revés.
+
+## 🧭 De transaccional a analítico
+
+Olist es una base **transaccional**: está diseñada para registrar pedidos sin equivocarse, no para analizarlos. Por eso está normalizada y el importe de un pedido no vive en `orders`, sino repartido en `order_payments`, que puede tener varias filas porque el cliente pagó con dos tarjetas y un voucher.
+
+Un modelo **analítico** busca lo contrario: leer y agregar rápido, aunque para ello haya que repetir información.
+
+Este proyecto es el puente entre los dos. Decidir el grano es el peaje.
 
 ## ⏳ Plazo de entrega
 
